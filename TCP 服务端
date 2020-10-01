@@ -9,25 +9,25 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            //socket
+            //socket  进行链接
             Socket listenfd = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            //Bind
+            //Bind    确定端口链接
             IPAddress ipAdr = IPAddress.Parse("127.0.0.1");
             IPEndPoint ipEP = new IPEndPoint(ipAdr, 8888);
             listenfd.Bind(ipEP);
-            //Listen 
+            //Listen   串口打开
             listenfd.Listen(0);
             Console.WriteLine("服务器启动成功");
             while (true) {
-                //Accept
+                //Accept    开始接收
                 Socket connfd = listenfd.Accept();
                 Console.WriteLine("服务器 Accept");
-                //Receive
+                //Receive   接收信息
                 byte[] readBuff = new byte[1024];
                 int count = connfd.Receive(readBuff);
                 string readStr = System.Text.Encoding.Default.GetString(readBuff, 0, count);
                 Console.WriteLine("服务器接收 " + readBuff);
-                //Send 
+                //Send      回送信息
                 byte[] sendBytes = System.Text.Encoding.Default.GetBytes(readStr);
                 connfd.Send(sendBytes);
             }
