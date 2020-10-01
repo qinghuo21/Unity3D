@@ -1,0 +1,73 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class WebPush1 : MonoBehaviour {
+
+    private GameObject Dog;
+    private Transform target;
+    private Transform head;
+    private Transform camerarig; 
+    private string url2 = "http://localhost:8888/exper/json";  //传输网址
+    private int count;           //实验计时器
+    private int status, Taskcount;         //实验状态,实验进度
+    private int TaskId = Skip2.dropvalue;             //任务id
+    private int TaskSchedule, taskNum;
+
+    void Start ()
+    {
+        Dog = GameObject.Find("Dog");
+        target = GameObject.Find("Player").GetComponent<Transform>();
+        camerarig = GameObject.Find("[CameraRig]").GetComponent<Transform>();
+        head = GameObject.Find("head").GetComponent<Transform>();
+        InvokeRepeating("GameOver", 3f, 3f);
+        Taskcount = TaskId+1;
+        taskNum = 3;
+    }
+	
+	void Update ()
+    {
+    
+    }
+
+    void GameOver()
+    {
+        StartCoroutine(WorkingWeb());
+    }
+
+
+
+    #region Correct web端连接
+
+    IEnumerator WorkingWeb()    //web反馈
+    {
+        double high = head.position.y - camerarig.position.y;
+        double positionx = target.position.x - camerarig.position.x;
+        double positionz = target.position.z - camerarig.position.z;
+        WWWForm form = new WWWForm();
+        form.AddField("x", target.position.x.ToString());
+        form.AddField("y", target.position.z.ToString());
+        form.AddField("z", high.ToString());
+        form.AddField("status", status); //实验状态
+        form.AddField("experid", TaskId + 1);//实验id
+        form.AddField("degree", target.eulerAngles.x.ToString()); //使用者头部角度
+        WWW getData = new WWW(url2, form);
+        yield return getData;
+        if (getData.error != null)
+        {
+            //ShowText.text = getData.error;
+        }
+        else
+        {
+            //ShowText.text = getData.text;
+        }
+    }
+    #endregion
+
+
+}
+
+
+
